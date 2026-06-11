@@ -13,17 +13,43 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.3
+          extensions: mbstring, pdo, pdo_mysql, bcmath, intl
+
+      - name: Install PHP dependencies
+        run: |
+          composer install \
+            --no-dev \
+            --optimize-autoloader \
+            --no-interaction
+
+      - name: Prepare build folder
+        run: |
+          mkdir -p build
+
+          rsync -av \
+            --exclude ".git" \
+            --exclude "node_modules" \
+            --exclude "tests" \
+            ./ build/
+
+      - name: Copy vendor into build (important step)
+        run: |
+          cp -R vendor build/vendor
+
       - name: Configure SSH
         run: |
           mkdir -p ~/.ssh
-
           echo "${{ secrets.VPS_SSH_KEY }}" > ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/id_ed25519
 
           ssh-keyscan -p ${{ secrets.VPS_SSH_PORT }} \
             ${{ secrets.VPS_HOST }} >> ~/.ssh/known_hosts
 
-      - name: Sync files with rsync
+      - name: Rsync to VPS
         run: |
           rsync -rlvz --delete \
             --no-times \
@@ -32,11 +58,8 @@ jobs:
             --no-group \
             --exclude ".env" \
             --exclude "storage" \
-            --exclude "vendor" \
-            --exclude "node_modules" \
-            --exclude ".git" \
             -e "ssh -i ~/.ssh/id_ed25519 -p ${{ secrets.VPS_SSH_PORT }}" \
-            ./ \
+            build/ \
             ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:/srv/apps/unitask
 
       - name: Remote deploy
@@ -49,41 +72,19 @@ jobs:
 
           cd /srv/apps/unitask
 
-          echo "Verificando docker-compose.yml..."
-
-          if [ ! -f docker-compose.yml ]; then
-            if [ -f docker-compose.yml.prod.example ]; then
-              echo "docker-compose.yml não existe. Copiando versão prod..."
-              cp docker-compose.yml.prod.example docker-compose.yml
-            else
-              echo "Nenhum docker-compose.yml encontrado. Abortando deploy."
-              exit 1
-            fi
-          fi
-
-          echo "Verificando .env..."
-
+          echo "Garantindo .env..."
           if [ ! -f .env ]; then
-            if [ -f .env.example ]; then
-              echo ".env não existe. Copiando de .env.example..."
-              cp .env.example .env
-            else
-              echo "Nenhum .env.example encontrado. Abortando."
-              exit 1
-            fi
+            cp .env.example .env
           fi
 
-          if ! grep -q "APP_KEY=base64:" .env; then
-            docker compose run --rm app php artisan key:generate --force
-          fi
-
+          echo "Subindo containers..."
           docker compose up -d --build
 
+          echo "Rodando migrations..."
           docker compose exec -T app php artisan optimize:clear || true
-          docker compose exec -T app php artisan migrate --force
+          docker compose exec -T app php artisan migrate --force || true
 
           EOF
 
-      - name: Cleanup SSH key
-        run: |
-          rm -f ~/.ssh/id_ed25519
+      - name: Cleanup
+        run: rm -f ~/.ssh/id_ed25519
