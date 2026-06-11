@@ -22,6 +22,9 @@ jobs:
 
       - name: Sync files with rsync
         run: |
+          echo "=== FILES BEFORE RSYNC ==="
+          ls -la
+          find . -maxdepth 2 -name "*compose*"
           rsync -rlvz --delete \
             --no-times \
             --no-perms \
@@ -35,6 +38,9 @@ jobs:
             -e "ssh -i ~/.ssh/id_ed25519 -p ${{ secrets.VPS_SSH_PORT }}" \
             ./ \
             ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:/srv/apps/unitask
+          echo "=== FILES AFTER RSYNC ==="
+          ls -la
+          find . -maxdepth 2 -name "*compose*"
 
       - name: Remote deploy
         run: |
