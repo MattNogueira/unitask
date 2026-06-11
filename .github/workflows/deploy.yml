@@ -25,9 +25,6 @@ jobs:
 
       - name: Sync files with rsync
         run: |
-          echo "=== FILES BEFORE RSYNC ==="
-          ls -la
-          find . -maxdepth 2 -name "*compose*"
           rsync -rlvz --delete \
             --no-times \
             --no-perms \
@@ -41,9 +38,6 @@ jobs:
             -e "ssh -i ~/.ssh/id_ed25519 -p ${{ secrets.VPS_SSH_PORT }}" \
             ./ \
             ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:/srv/apps/unitask
-          echo "=== FILES AFTER RSYNC ==="
-          ls -la
-          find . -maxdepth 2 -name "*compose*"
 
       - name: Remote deploy
         run: |
@@ -67,8 +61,21 @@ jobs:
             fi
           fi
 
-          echo "Arquivos no diretório:"
-          ls -la
+          echo "Verificando .env..."
+
+          if [ ! -f .env ]; then
+            if [ -f .env.example ]; then
+              echo ".env não existe. Copiando de .env.example..."
+              cp .env.example .env
+            else
+              echo "Nenhum .env.example encontrado. Abortando."
+              exit 1
+            fi
+          fi
+
+          if ! grep -q "APP_KEY=base64:" .env; then
+            docker compose run --rm app php artisan key:generate --force
+          fi
 
           docker compose up -d --build
 
