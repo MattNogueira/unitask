@@ -1,5 +1,5 @@
 services:
-  app:
+  unitask:
     build: .
     restart: unless-stopped
     container_name: unitask-app
