@@ -1,0 +1,15 @@
+services:
+  app:
+    build: .
+    restart: unless-stopped
+    container_name: unitask-app
+    env_file:
+      - .env
+    volumes:
+      - .:/var/www
+    networks:
+      - main-network
+
+networks:
+  main-network:
+    external: true
