@@ -22,8 +22,11 @@ jobs:
 
       - name: Sync files with rsync
         run: |
-          rsync -avz --delete \
-            --omit-dir-times \
+          rsync -rlvz --delete \
+            --no-times \
+            --no-perms \
+            --no-owner \
+            --no-group \
             --exclude ".env" \
             --exclude "storage" \
             --exclude "vendor" \
