@@ -5,6 +5,8 @@ services:
     container_name: unitask-app
     env_file:
       - .env
+    expose:
+      - "9000"
     volumes:
       - .:/var/www
     networks:
