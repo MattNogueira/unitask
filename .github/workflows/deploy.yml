@@ -23,6 +23,7 @@ jobs:
       - name: Sync files with rsync
         run: |
           rsync -avz --delete \
+            --omit-dir-times \
             --exclude ".env" \
             --exclude "storage" \
             --exclude "vendor" \
