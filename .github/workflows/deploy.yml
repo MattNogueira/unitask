@@ -51,6 +51,7 @@ jobs:
 
       - name: Rsync to VPS
         run: |
+          cp docker-compose.yml.prod.example build/docker-compose.yml
           rsync -rlvz --delete \
             --no-times \
             --no-perms \
