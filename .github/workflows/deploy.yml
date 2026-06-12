@@ -74,13 +74,8 @@ jobs:
 
           rsync -rlvz --delete \
             --no-times \
-            --no-perms \
-            --no-owner \
-            --no-group \
-            --exclude ".env" \
-            --exclude "storage/" \
-            --exclude "bootstrap/cache/" \
-            -e "ssh -i ~/.ssh/id_ed25519 -p ${{ secrets.VPS_SSH_PORT }}" \
+            --exclude-from='.rsyncignore' \
+            -e "ssh -i ~/.ssh/id_ed25519 -p ${{ secrets.VPS_SSH_PORT }} -o StrictHostKeyChecking=yes" \
             build/ \
             ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:/srv/apps/unitask
 

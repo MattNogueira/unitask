@@ -1,0 +1,11 @@
+.git/
+.github/
+
+.env
+
+tmp/
+cache/
+
+node_modules/
+storage/
+bootstrap/cache
