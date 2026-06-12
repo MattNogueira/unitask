@@ -10,3 +10,5 @@ WORKDIR /var/www
 COPY . .
 
 CMD ["php-fpm"]
+
+# Roda praga
