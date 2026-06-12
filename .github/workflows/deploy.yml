@@ -63,6 +63,10 @@ jobs:
             echo "ssh-keyscan falhou, tentativa $i..."
             sleep 5
           done
+          
+      - name: Validate SSH key
+        run: |
+          ssh-keygen -l -f ~/.ssh/id_ed25519
 
       - name: Test SSH connection
         run: |
