@@ -5,10 +5,8 @@ RUN apt-get update && apt-get install -y \
     && docker-php-ext-install pdo pdo_sqlite \
     && rm -rf /var/lib/apt/lists/*
 
-WORKDIR /var/www
+WORKDIR /var/www/unitask
 
-COPY . .
+COPY . /var/www/unitask
 
 CMD ["php-fpm"]
-
-# Roda praga
