@@ -11,16 +11,10 @@ services:
       - main-network
 
     volumes:
-      - storage:/var/www/storage
-      - cache:/var/www/bootstrap/cache
-
-      - sqlite:/var/www/database
+      - ./storage:/var/www/storage
+      - ./bootstrap/cache:/var/www/bootstrap/cache
+      - ./database:/var/www/database
 
 networks:
   main-network:
     external: true
-
-volumes:
-  storage:
-  cache:
-  sqlite:
