@@ -82,8 +82,8 @@ jobs:
           docker compose up -d --build
 
           echo "Rodando migrations..."
-          docker compose exec -T app php artisan optimize:clear || true
-          docker compose exec -T app php artisan migrate --force || true
+          docker compose exec -T unitask php artisan optimize:clear || true
+          docker compose exec -T unitask php artisan migrate --force || true
 
           EOF
 
