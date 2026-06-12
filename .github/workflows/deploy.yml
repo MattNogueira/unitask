@@ -72,7 +72,7 @@ jobs:
         run: |
           cp docker-compose.yml.prod.example build/docker-compose.yml
 
-          rsync -rlvz --delete \
+          rsync -rlvzi --delete \
             --no-times \
             --exclude-from='.rsyncignore' \
             -e "ssh -i ~/.ssh/id_ed25519 -p ${{ secrets.VPS_SSH_PORT }} -o StrictHostKeyChecking=yes" \
