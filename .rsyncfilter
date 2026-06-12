@@ -1,6 +1,7 @@
 P database/database.sqlite
-P storage/
-P bootstrap/cache
+
+- storage/
+- bootstrap/cache
 
 - .git/
 - .github/
