@@ -7,11 +7,20 @@ services:
       - .env
     expose:
       - "9000"
-    volumes:
-      - .:/var/www
     networks:
       - main-network
+
+    volumes:
+      - storage:/var/www/storage
+      - cache:/var/www/bootstrap/cache
+
+      - sqlite:/var/www/database
 
 networks:
   main-network:
     external: true
+
+volumes:
+  storage:
+  cache:
+  sqlite:
