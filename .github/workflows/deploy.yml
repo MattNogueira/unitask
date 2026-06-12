@@ -28,43 +28,57 @@ jobs:
 
       - name: Prepare build folder
         run: |
-          mkdir -p build
+          rm -rf build
+          mkdir build
 
           rsync -av \
             --exclude ".git" \
+            --exclude ".github" \
             --exclude "node_modules" \
             --exclude "tests" \
+            --exclude "build" \
             ./ build/
 
-      - name: Copy vendor into build (important step)
+      - name: Copy vendor into build
         run: |
           cp -R vendor build/vendor
 
+      - name: Validate build
+        run: |
+          test -f build/vendor/autoload.php
+
       - name: Configure SSH
         run: |
-          set -x
-
           mkdir -p ~/.ssh
 
           printf '%s' "${{ secrets.VPS_SSH_KEY }}" > ~/.ssh/id_ed25519
+
           chmod 600 ~/.ssh/id_ed25519
 
-          echo "Testando resolução DNS..."
-          getent hosts ${{ secrets.VPS_HOST }}
+          for i in 1 2 3; do
+            ssh-keyscan -H \
+              -p ${{ secrets.VPS_SSH_PORT }} \
+              ${{ secrets.VPS_HOST }} >> ~/.ssh/known_hosts && break
 
-          echo "Testando ssh-keyscan..."
-          ssh-keyscan -v \
-            -p ${{ secrets.VPS_SSH_PORT }} \
-            ${{ secrets.VPS_HOST }}
+            echo "ssh-keyscan falhou, tentativa $i..."
+            sleep 5
+          done
 
-          ssh-keyscan -H \
+      - name: Test SSH connection
+        run: |
+          ssh \
+            -i ~/.ssh/id_ed25519 \
             -p ${{ secrets.VPS_SSH_PORT }} \
-            ${{ secrets.VPS_HOST }} >> ~/.ssh/known_hosts
+            -o BatchMode=yes \
+            -o StrictHostKeyChecking=yes \
+            ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} \
+            "echo SSH OK"
 
       - name: Rsync to VPS
         run: |
           cp docker-compose.yml.prod.example build/docker-compose.yml
-          rsync -rlvz \
+
+          rsync -rlvz --delete \
             --no-times \
             --no-perms \
             --no-owner \
@@ -78,7 +92,8 @@ jobs:
 
       - name: Remote deploy
         run: |
-          ssh -i ~/.ssh/id_ed25519 \
+          ssh \
+            -i ~/.ssh/id_ed25519 \
             -p ${{ secrets.VPS_SSH_PORT }} \
             ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} << 'EOF'
 
@@ -86,20 +101,32 @@ jobs:
 
           cd /srv/apps/unitask
 
-          echo "Garantindo .env..."
           if [ ! -f .env ]; then
             cp .env.example .env
           fi
 
-          echo "Subindo containers..."
           docker compose down --remove-orphans
+
           docker compose up -d --build
 
-          echo "Rodando migrations..."
-          docker compose exec -T unitask php artisan optimize:clear || true
-          docker compose exec -T unitask php artisan migrate --force || true
+          docker compose exec -T unitask mkdir -p \
+            storage/framework/cache \
+            storage/framework/views \
+            storage/framework/sessions
+
+          docker compose exec -T unitask chown -R www-data:www-data \
+            storage bootstrap/cache
+
+          docker compose exec -T unitask chmod -R 775 \
+            storage bootstrap/cache
+
+          docker compose exec -T unitask php artisan optimize:clear
+
+          docker compose exec -T unitask php artisan migrate --force
 
           EOF
 
       - name: Cleanup
-        run: rm -f ~/.ssh/id_ed25519
+        if: always()
+        run: |
+          rm -f ~/.ssh/id_ed25519
