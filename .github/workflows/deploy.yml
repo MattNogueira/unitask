@@ -78,6 +78,8 @@ jobs:
             cp .env.example .env
           fi
 
+          docker compose exec -T unitask chmod -R 775 storage bootstrap/cache
+
           echo "Subindo containers..."
           docker compose up -d --build
 
