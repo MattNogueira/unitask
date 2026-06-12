@@ -1,0 +1,16 @@
+P database/database.sqlite
+P storage/
+P bootstrap/cache
+
+- .git/
+- .github/
+
++ .env.example
+- .env
+
++ docker-compose.yml.prod.example
+- docker-compose.yml
+
+- tmp/
+
+- node_modules/
