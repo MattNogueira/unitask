@@ -9,3 +9,5 @@ cache/
 node_modules/
 storage/
 bootstrap/cache
+
+database/*.sqlite"
