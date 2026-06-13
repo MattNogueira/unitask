@@ -1,6 +1,7 @@
 services:
   unitask:
     build: .
+    image: unitask:latest
     restart: unless-stopped
     user: "1003:1003"
     container_name: unitask-app
@@ -12,9 +13,9 @@ services:
       - main-network
 
     volumes:
-      - ./storage:/var/www/storage
-      - ./bootstrap/cache:/var/www/bootstrap/cache
-      - ./database:/var/www/database
+      - ./storage:/var/www/unitask/storage
+      - ./bootstrap/cache:/var/www/unitask/bootstrap/cache
+      - ./database:/var/www/unitask/database
 
 networks:
   main-network:
