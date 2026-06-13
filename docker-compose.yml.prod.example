@@ -2,7 +2,7 @@ services:
   unitask:
     build: .
     restart: unless-stopped
-    user: "www-data:1003"
+    user: "1003:1003"
     container_name: unitask-app
     env_file:
       - .env
