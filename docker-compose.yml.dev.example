@@ -6,7 +6,7 @@ services:
     env_file:
       - .env
     volumes:
-      - .:/var/www
+      - .:/var/www/unitask
     ports:
       - "8000:8000"
     command: php artisan serve --host=0.0.0.0 --port=8000
@@ -14,9 +14,9 @@ services:
   vite:
     image: node:22
     container_name: unitask-vite
-    working_dir: /var/www
+    working_dir: /var/www/unitask
     volumes:
-      - .:/var/www
+      - .:/var/www/unitask
     ports:
       - "5173:5173"
     command: sh -c "npm install && npm run dev -- --host 0.0.0.0"
