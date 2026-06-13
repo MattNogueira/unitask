@@ -106,9 +106,6 @@ jobs:
 
           cd /srv/apps/unitask
 
-          docker compose exec -T unitask ls -la /
-          docker compose exec -T unitask ls -la /var/www/unitask || true
-
           echo "⏳ WAITING CONTAINER READY"
 
           for i in {1..10}; do
