@@ -98,37 +98,6 @@ jobs:
           docker compose down --remove-orphans
           docker compose up -d --build
 
-          echo "⏳ WAITING CONTAINER READY"
-          for i in {1..10}; do
-            if docker compose exec -T unitask php -v >/dev/null 2>&1; then
-              echo "✅ READY"
-              break
-            fi
-            sleep 2
-          done
-
-          echo "🔍 CHECK STATE"
-          docker compose exec -T unitask id
-
-          echo "📂 STORAGE CHECK"
-          docker compose exec -T unitask sh -c "
-            ls -ldn storage storage/framework storage/logs storage/bootstrap/cache
-          "
-
-          echo "✍️ WRITE TEST"
-          docker compose exec -T unitask sh -c "
-            touch storage/framework/_write_test && echo OK || echo FAIL
-          "
-
-          echo "⚡ OPTIMIZE"
-          docker compose exec -T unitask php artisan optimize:clear
-          docker compose exec -T unitask php artisan config:cache
-          docker compose exec -T unitask php artisan route:cache
-          docker compose exec -T unitask php artisan view:cache
-
-          echo "🧬 MIGRATE"
-          docker compose exec -T unitask php artisan migrate --force
-
           echo "✅ DONE"
 
           EOF
