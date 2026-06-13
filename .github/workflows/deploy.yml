@@ -85,9 +85,8 @@ jobs:
             -p ${{ secrets.VPS_SSH_PORT }} \
             ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} << 'EOF'
 
-          cd /srv/apps/unitask
-
           set -euo pipefail
+          cd /srv/apps/unitask
 
           echo "🚀 DEPLOY START"
 
@@ -95,22 +94,14 @@ jobs:
             cp .env.example .env
           fi
 
-          set -x
+          echo "📦 START CONTAINERS"
           docker compose down --remove-orphans
           docker compose up -d --build
-      - name: Post-deploy
-        run: |
-          ssh -i ~/.ssh/id_ed25519 \
-            -p ${{ secrets.VPS_SSH_PORT }} \
-            ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} << 'EOF'
-
-          cd /srv/apps/unitask
 
           echo "⏳ WAITING CONTAINER READY"
-
           for i in {1..10}; do
             if docker compose exec -T unitask php -v >/dev/null 2>&1; then
-              echo "✅ CONTAINER READY"
+              echo "✅ READY"
               break
             fi
             sleep 2
@@ -138,9 +129,9 @@ jobs:
           echo "🧬 MIGRATE"
           docker compose exec -T unitask php artisan migrate --force
 
-          set +x
-
           echo "✅ DONE"
+
+          EOF
 
       - name: Cleanup
         if: always()
