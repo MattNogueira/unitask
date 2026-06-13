@@ -98,17 +98,6 @@ jobs:
 
           docker compose up -d --build
 
-          docker compose exec -T unitask mkdir -p \
-            storage/framework/cache \
-            storage/framework/views \
-            storage/framework/sessions
-
-          docker compose exec -T unitask chown -R www-data:www-data \
-            storage bootstrap/cache
-
-          docker compose exec -T unitask chmod -R 775 \
-            storage bootstrap/cache
-
           docker compose exec -T unitask php artisan optimize:clear
 
           docker compose exec -T unitask php artisan migrate --force
