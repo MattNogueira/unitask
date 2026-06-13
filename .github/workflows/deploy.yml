@@ -98,9 +98,57 @@ jobs:
 
           docker compose up -d --build
 
-          docker compose exec -T unitask php artisan optimize:clear
+      - name: Check result
+        run: |
+          ssh \
+            -i ~/.ssh/id_ed25519 \
+            -p ${{ secrets.VPS_SSH_PORT }} \
+            ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} << 'EOF'
 
-          docker compose exec -T unitask php artisan migrate --force
+          set -euxo pipefail
+
+          cd /srv/apps/unitask
+          
+          echo "===== CONTAINER USER INFO ====="
+
+          docker compose exec -T unitask whoami || true
+          docker compose exec -T unitask id || true
+
+          echo "===== STORAGE (HOST VIEW INSIDE CONTAINER) ====="
+
+          docker compose exec -T unitask sh -c "
+            ls -ldn storage storage/framework storage/logs storage/bootstrap/cache || true
+          "
+
+          echo "===== STORAGE TREE SNAPSHOT ====="
+
+          docker compose exec -T unitask sh -c "
+            find storage -maxdepth 3 -type d -exec ls -ldn {} \; || true
+          "
+
+          echo "===== TEST WRITE PERMISSION ====="
+
+          docker compose exec -T unitask sh -c "
+            touch storage/framework/_write_test 2>&1 || true
+            ls -ln storage/framework/_write_test 2>&1 || true
+          "
+
+          EOF
+      
+      - name: Optimize
+        run: |
+          ssh \
+            -i ~/.ssh/id_ed25519 \
+            -p ${{ secrets.VPS_SSH_PORT }} \
+            ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} << 'EOF'
+
+          set -euxo pipefail
+
+          cd /srv/apps/unitask
+
+          docker compose exec -T unitask php artisan config:cache
+          docker compose exec -T unitask php artisan route:cache
+          docker compose exec -T unitask php artisan view:cache
 
           EOF
 
