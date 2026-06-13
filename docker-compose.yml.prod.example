@@ -2,6 +2,7 @@ services:
   unitask:
     build: .
     restart: unless-stopped
+    user: "www-data:unitask"
     container_name: unitask-app
     env_file:
       - .env
