@@ -83,9 +83,7 @@ jobs:
         run: |
           ssh -i ~/.ssh/id_ed25519 \
             -p ${{ secrets.VPS_SSH_PORT }} \
-            ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} << 'EOF'
-
-          cd /srv/apps/unitask
+            ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:/srv/apps/unitask << 'EOF'
 
           set -euo pipefail
 
@@ -98,6 +96,14 @@ jobs:
           set -x
           docker compose down --remove-orphans
           docker compose up -d --build
+      - name: Post-deploy
+        run: |
+          ssh -i ~/.ssh/id_ed25519 \
+            -p ${{ secrets.VPS_SSH_PORT }} \
+            ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:/srv/apps/unitask << 'EOF'
+
+          docker compose exec -T unitask ls -la /
+          docker compose exec -T unitask ls -la /var/www/unitask || true
 
           echo "⏳ WAITING CONTAINER READY"
 
