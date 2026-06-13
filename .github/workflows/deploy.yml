@@ -81,8 +81,7 @@ jobs:
 
       - name: Remote deploy
         run: |
-          ssh \
-            -i ~/.ssh/id_ed25519 \
+          ssh -i ~/.ssh/id_ed25519 \
             -p ${{ secrets.VPS_SSH_PORT }} \
             ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} << 'EOF'
 
@@ -90,65 +89,45 @@ jobs:
 
           cd /srv/apps/unitask
 
+          echo "🚀 DEPLOY START"
+
+          # setup
           if [ ! -f .env ]; then
             cp .env.example .env
           fi
 
           docker compose down --remove-orphans
-
           docker compose up -d --build
 
-      - name: Check result
-        run: |
-          ssh \
-            -i ~/.ssh/id_ed25519 \
-            -p ${{ secrets.VPS_SSH_PORT }} \
-            ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} << 'EOF'
-
-          set -euxo pipefail
-
-          cd /srv/apps/unitask
-
-          echo "===== CONTAINER USER INFO ====="
+          echo "🔍 CHECK STATE"
 
           docker compose exec -T unitask whoami || true
           docker compose exec -T unitask id || true
 
-          echo "===== STORAGE (HOST VIEW INSIDE CONTAINER) ====="
+          echo "📂 STORAGE CHECK"
 
           docker compose exec -T unitask sh -c "
             ls -ldn storage storage/framework storage/logs storage/bootstrap/cache || true
           "
 
-          echo "===== STORAGE TREE SNAPSHOT ====="
+          echo "✍️ WRITE TEST"
 
           docker compose exec -T unitask sh -c "
-            find storage -maxdepth 3 -type d -exec ls -ldn {} \; || true
+            touch storage/framework/_write_test && echo OK || echo FAIL
           "
 
-          echo "===== TEST WRITE PERMISSION ====="
+          echo "⚡ OPTIMIZE"
 
-          docker compose exec -T unitask sh -c "
-            touch storage/framework/_write_test 2>&1 || true
-            ls -ln storage/framework/_write_test 2>&1 || true
-          "
-
-          EOF
-      
-      - name: Optimize
-        run: |
-          ssh \
-            -i ~/.ssh/id_ed25519 \
-            -p ${{ secrets.VPS_SSH_PORT }} \
-            ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} << 'EOF'
-
-          set -euxo pipefail
-
-          cd /srv/apps/unitask
-
+          docker compose exec -T unitask php artisan optimize:clear
           docker compose exec -T unitask php artisan config:cache
           docker compose exec -T unitask php artisan route:cache
           docker compose exec -T unitask php artisan view:cache
+
+          echo "🧬 MIGRATE"
+
+          docker compose exec -T unitask php artisan migrate --force
+
+          echo "✅ DONE"
 
           EOF
 
