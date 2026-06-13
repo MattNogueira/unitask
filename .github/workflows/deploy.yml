@@ -100,12 +100,12 @@ jobs:
           docker compose up -d --build
 
           echo "🔍 CHECK STATE"
-          docker compose exec -T unitask id || true
+          docker compose exec -T unitask id
 
           echo "📂 STORAGE CHECK"
           docker compose exec -T unitask sh -c "
             ls -ldn storage storage/framework storage/logs storage/bootstrap/cache
-          " || true
+          "
 
           echo "✍️ WRITE TEST"
           docker compose exec -T unitask sh -c "
