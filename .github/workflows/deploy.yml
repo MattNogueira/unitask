@@ -85,7 +85,7 @@ jobs:
             -p ${{ secrets.VPS_SSH_PORT }} \
             ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} << 'EOF'
 
-          cd srv/apps/unitask
+          cd /srv/apps/unitask
 
           set -euo pipefail
 
