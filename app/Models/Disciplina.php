@@ -4,10 +4,23 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-#[Fillable(['nome', 'professor', 'horario', 'id_usuario'])]
 class Disciplina extends Model
 {
     protected $table = 'disciplina';
+
+    protected $fillable = [
+        'nome',
+        'professor',
+        'horario',
+        'id_usuario',
+    ];
+
+    protected function casts(): array
+    {
+        return [
+            'horario' => 'datetime',
+        ];
+    }
 
     public function usuario()
     {

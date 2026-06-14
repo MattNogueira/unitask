@@ -4,14 +4,20 @@ namespace App\Models;
 
 use App\Enums\PrioridadeAtividadeEnum;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Attributes\Fillable;
 use App\Enums\StatusAtividadeEnum;
 
 class Atividade extends Model
 {
-    #[Fillable(['titulo', 'descricao', 'prazo', 'status', 'prioridade', 'id_disciplina'])]
-
     protected $table = 'atividade';
+
+    protected $fillable = [
+        'titulo',
+        'descricao',
+        'prazo',
+        'status',
+        'prioridade',
+        'id_disciplina',
+    ];
 
     protected function casts(): array
     {
