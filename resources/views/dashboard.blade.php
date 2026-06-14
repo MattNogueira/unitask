@@ -65,7 +65,7 @@
                             <section>
                                 <div class="mb-4 flex items-center justify-between">
                                     <h2 class="text-xl font-medium text-slate-950 lg:text-2xl">{{ $months[(int) $today->format('n')] }} {{ $today->format('Y') }}</h2>
-                                    <a href="#" class="text-base font-medium text-blue-600 hover:text-blue-700">Ver tudo</a>
+                                    <a href="{{ route('calendario.index') }}" class="text-base font-medium text-blue-600 hover:text-blue-700">Ver tudo</a>
                                 </div>
 
                                 <div class="grid grid-cols-7 gap-2 lg:gap-3">

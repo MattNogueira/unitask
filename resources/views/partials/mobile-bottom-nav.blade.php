@@ -38,7 +38,7 @@
             @endif
         </div>
 
-        <a href="#" class="flex min-w-0 flex-col items-center justify-center gap-1 text-[11px] font-medium text-slate-500" aria-label="Agenda">
+        <a href="{{ route('calendario.index') }}" class="{{ $active === 'calendario' ? 'text-blue-600' : 'text-slate-500' }} flex min-w-0 flex-col items-center justify-center gap-1 text-[11px] font-medium" aria-label="Agenda">
             <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                 <path d="M7 4v3M17 4v3M5 9h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
                 <rect x="4" y="6" width="16" height="14" rx="2" stroke="currentColor" stroke-width="1.8" />

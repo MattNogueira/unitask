@@ -78,7 +78,7 @@ class AtividadeController extends Controller
         $atividade->delete();
 
         return redirect()
-            ->route('atividades.index')
+            ->to($this->previousUrlWithoutModal())
             ->with('status', 'atividade-removida');
     }
 

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\AtividadeController;
+use App\Http\Controllers\CalendarioController;
 use App\Http\Controllers\DisciplinaController;
 use App\Models\Atividade;
 use App\Models\Disciplina;
@@ -61,6 +62,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/menu', function () {
         return view('menu');
     })->name('menu');
+
+    Route::get('/calendario', [CalendarioController::class, 'index'])->name('calendario.index');
 
     Route::resource('disciplinas', DisciplinaController::class)->except(['show']);
     Route::patch('atividades/{atividade}/concluir', [AtividadeController::class, 'concluir'])
