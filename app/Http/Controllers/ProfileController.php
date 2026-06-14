@@ -21,6 +21,13 @@ class ProfileController extends Controller
         ]);
     }
 
+    public function manage(Request $request): View
+    {
+        return view('profile.manage', [
+            'user' => $request->user(),
+        ]);
+    }
+
     /**
      * Update the user's profile information.
      */
@@ -30,7 +37,11 @@ class ProfileController extends Controller
 
         $request->user()->save();
 
-        return Redirect::route('profile.edit')->with('status', 'profile-updated');
+        $route = $request->input('redirect_to') === 'manage'
+            ? 'profile.manage'
+            : 'profile.edit';
+
+        return Redirect::route($route)->with('status', 'profile-updated');
     }
 
     /**

@@ -7,6 +7,7 @@ use App\Models\Atividade;
 use App\Models\Disciplina;
 use App\Enums\StatusAtividadeEnum;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -47,6 +48,16 @@ Route::get('/dashboard', function () {
 })->middleware(['auth'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
+    Route::patch('/theme', function (Request $request) {
+        $validated = $request->validate([
+            'theme' => ['required', 'in:light,dark'],
+        ]);
+
+        $request->session()->put('theme', $validated['theme']);
+
+        return back();
+    })->name('theme.update');
+
     Route::get('/menu', function () {
         return view('menu');
     })->name('menu');
@@ -57,6 +68,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('atividades', AtividadeController::class)->except(['show']);
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::get('/profile/manage', [ProfileController::class, 'manage'])->name('profile.manage');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });

@@ -3,6 +3,76 @@
 @tailwind utilities;
 
 @layer utilities {
+    .dark body {
+        background-color: #020617;
+        color: #f8fafc;
+    }
+
+    .dark .bg-white,
+    .dark .bg-slate-50 {
+        background-color: #0f172a;
+    }
+
+    .dark .bg-slate-100 {
+        background-color: #020617;
+    }
+
+    .dark .bg-slate-200 {
+        background-color: #334155;
+    }
+
+    .dark .bg-blue-50 {
+        background-color: rgb(30 64 175 / 0.18);
+    }
+
+    .dark .text-slate-950,
+    .dark .text-slate-900 {
+        color: #f8fafc;
+    }
+
+    .dark .text-slate-700 {
+        color: #cbd5e1;
+    }
+
+    .dark .text-slate-500 {
+        color: #94a3b8;
+    }
+
+    .dark .text-slate-400,
+    .dark .text-slate-300 {
+        color: #64748b;
+    }
+
+    .dark .border-slate-100,
+    .dark .border-slate-200,
+    .dark .border-slate-300 {
+        border-color: #1e293b;
+    }
+
+    .dark input,
+    .dark select,
+    .dark textarea {
+        background-color: #1e293b;
+        border-color: #334155;
+        color: #f8fafc;
+    }
+
+    .dark input::placeholder,
+    .dark textarea::placeholder,
+    .dark .placeholder\:text-slate-400::placeholder {
+        color: #64748b;
+    }
+
+    .dark .shadow-sm,
+    .dark .shadow,
+    .dark .shadow-md,
+    .dark .shadow-lg,
+    .dark .shadow-xl,
+    .dark [class*="shadow-["] {
+        --tw-shadow-color: rgb(0 0 0 / 0.35);
+        --tw-shadow: var(--tw-shadow-colored);
+    }
+
     .modal-scroll {
         scrollbar-color: #cbd5e1 transparent;
         scrollbar-width: thin;

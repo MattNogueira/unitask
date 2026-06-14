@@ -4,7 +4,7 @@
     $additionalSidebarOptions = [];
 @endphp
 
-<aside x-data="{ outrosOpen: false }" class="hidden min-h-screen w-[280px] shrink-0 flex-col border-r border-slate-200 bg-white px-6 py-8 lg:flex">
+<aside x-data="{ outrosOpen: false }" class="box-border hidden h-screen w-[280px] shrink-0 flex-col border-r border-slate-200 bg-white px-6 py-8 lg:sticky lg:top-0 lg:flex">
     <div class="flex items-center gap-3">
         <a href="{{ route('dashboard') }}" class="flex min-w-0 items-center gap-3">
             <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-[14px] bg-blue-600 text-white shadow-[0_12px_24px_rgba(37,99,235,0.22)]">

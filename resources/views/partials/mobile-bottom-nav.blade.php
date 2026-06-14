@@ -5,7 +5,7 @@
     'createLabel' => 'Adicionar',
 ])
 
-<nav class="fixed inset-x-0 bottom-0 z-30 mx-auto h-[82px] w-full max-w-[540px] bg-white px-4 shadow-[0_-16px_35px_rgba(15,23,42,0.06)] lg:hidden" aria-label="Navegação principal">
+<nav class="fixed inset-x-0 bottom-0 z-30 mx-auto h-[82px] w-full max-w-[540px] bg-white px-4 shadow-[0_-16px_35px_rgba(15,23,42,0.06)] dark:bg-slate-900 dark:shadow-[0_-16px_35px_rgba(0,0,0,0.24)] lg:hidden" aria-label="Navegação principal">
     <div class="grid h-full grid-cols-5 items-center">
         <a href="{{ route('dashboard') }}" class="{{ $active === 'dashboard' ? 'text-blue-600' : 'text-slate-500' }} flex min-w-0 flex-col items-center justify-center gap-1 text-[11px] font-medium" aria-label="Home">
             <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" aria-hidden="true">
