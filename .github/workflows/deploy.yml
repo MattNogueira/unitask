@@ -26,6 +26,17 @@ jobs:
             --optimize-autoloader \
             --no-interaction
 
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install Node dependencies
+        run: npm ci
+
+      - name: Build frontend assets
+        run: npm run build
+
       - name: Prepare build folder
         run: |
           rm -rf build
@@ -36,7 +47,7 @@ jobs:
             --exclude ".github" \
             --exclude "node_modules" \
             --exclude "tests" \
-            --exclude "build" \
+            --exclude "/build/" \
             ./ build/
 
       - name: Copy vendor into build
@@ -46,6 +57,7 @@ jobs:
       - name: Validate build
         run: |
           test -f build/vendor/autoload.php
+          test -f build/public/build/manifest.json
 
       - name: Configure SSH
         run: |
